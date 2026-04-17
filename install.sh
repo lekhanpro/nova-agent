@@ -1,7 +1,7 @@
 #!/bin/bash
 #
-# AutoGPT-Termux Installer
-# One-liner: curl -fsSL https://raw.githubusercontent.com/lekhanpro/autogpt-termux/main/install.sh | bash
+# Nova Agent Installer
+# One-liner: curl -fsSL https://raw.githubusercontent.com/lekhanpro/nova-agent/main/install.sh | bash
 #
 
 set -e
@@ -18,8 +18,8 @@ NC='\033[0m'
 # ─── Banner ───────────────────────────────────────────────────────────────────
 echo -e "${CYAN}${BOLD}"
 echo "╔════════════════════════════════════════════════╗"
-echo "║         AutoGPT-Termux Installer               ║"
-echo "║   Run AutoGPT AI Agent on Android — No Root    ║"
+echo "║         Nova Agent Installer               ║"
+echo "║   Run Nova AI Agent on Android — No Root    ║"
 echo "╚════════════════════════════════════════════════╝"
 echo -e "${NC}"
 
@@ -39,9 +39,9 @@ echo -e "  ${GREEN}✓${NC} git installed"
 echo -e "  ${GREEN}✓${NC} proot-distro installed"
 echo -e "  ${GREEN}✓${NC} curl / wget installed"
 
-# ─── Step 2: Install autogpt-termux from npm ──────────────────────────────────
-echo -e "\n${BLUE}[2/2]${NC} Installing autogpt-termux CLI..."
-npm install -g autogpt-termux
+# ─── Step 2: Install nova-agent from npm ──────────────────────────────────
+echo -e "\n${BLUE}[2/2]${NC} Installing nova-agent CLI..."
+npm install -g nova-agent
 
 # ─── Done ─────────────────────────────────────────────────────────────────────
 echo ""
@@ -50,10 +50,10 @@ echo -e "${GREEN}${BOLD}  Installation complete! 🎉${NC}"
 echo -e "${GREEN}${BOLD}════════════════════════════════════════════════${NC}"
 echo ""
 echo -e "${YELLOW}Next steps:${NC}"
-echo -e "  1. Run setup:     ${CYAN}autogptx setup${NC}"
-echo -e "  2. Configure key: ${CYAN}autogptx configure${NC}"
-echo -e "  3. Start agent:   ${CYAN}autogptx start${NC}"
-echo -e "  4. View logs:     ${CYAN}autogptx logs${NC}"
+echo -e "  1. Run setup:     ${CYAN}novax setup${NC}"
+echo -e "  2. Configure key: ${CYAN}novax configure${NC}"
+echo -e "  3. Start agent:   ${CYAN}novax start${NC}"
+echo -e "  4. View logs:     ${CYAN}novax logs${NC}"
 echo ""
 echo -e "${YELLOW}Web dashboard:${NC} ${BLUE}http://localhost:8000${NC}"
 echo ""

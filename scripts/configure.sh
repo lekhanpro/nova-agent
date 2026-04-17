@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# AutoGPT-Termux configure script
+# Nova Agent configure script
 # Interactive wizard for API key setup inside the proot Ubuntu .env
 #
 
@@ -16,7 +16,7 @@ NC='\033[0m'
 
 echo -e "${CYAN}${BOLD}"
 echo "╔═══════════════════════════════════════════════════╗"
-echo "║         AutoGPT-Termux  ·  Configuration          ║"
+echo "║         Nova Agent  ·  Configuration          ║"
 echo "╚═══════════════════════════════════════════════════╝"
 echo -e "${NC}"
 
@@ -38,7 +38,7 @@ done
 
 if [ -z "$ENV_FILE" ]; then
     echo -e "${YELLOW}⚠ .env file not found inside Ubuntu container.${NC}"
-    echo -e "  Have you run ${CYAN}autogptx setup${NC} yet?"
+    echo -e "  Have you run ${CYAN}novax setup${NC} yet?"
     echo -e "  Using default path: /root/autogpt/.env"
     ENV_FILE='/root/autogpt/.env'
 fi
@@ -158,5 +158,5 @@ echo -e "${GREEN}${BOLD}══════════════════�
 echo -e "${GREEN}${BOLD}  ✓ Configuration saved!${NC}"
 echo -e "${GREEN}${BOLD}════════════════════════════════════════════════════${NC}"
 echo ""
-echo -e "  Start the agent: ${CYAN}autogptx start${NC}"
+echo -e "  Start the agent: ${CYAN}novax start${NC}"
 echo ""

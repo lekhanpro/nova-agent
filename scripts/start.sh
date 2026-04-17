@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# AutoGPT start script — launches AutoGPT agent inside proot Ubuntu
+# Nova Agent start script — launches AutoGPT agent inside proot Ubuntu
 #
 
 set -uo pipefail
@@ -16,17 +16,17 @@ NC='\033[0m'
 
 # ─── Check proot-distro ───────────────────────────────────────────────────────
 if ! command -v proot-distro &>/dev/null; then
-    echo -e "${RED}✗ proot-distro not found. Run: autogptx setup${NC}"
+    echo -e "${RED}✗ proot-distro not found. Run: novax setup${NC}"
     exit 1
 fi
 
 # ─── Check Ubuntu is installed ───────────────────────────────────────────────
 if ! proot-distro list 2>/dev/null | grep -q "ubuntu"; then
-    echo -e "${RED}✗ Ubuntu not installed. Run: autogptx setup${NC}"
+    echo -e "${RED}✗ Ubuntu not installed. Run: novax setup${NC}"
     exit 1
 fi
 
-echo -e "${CYAN}${BOLD}⚡ Starting AutoGPT Agent...${NC}"
+echo -e "${CYAN}${BOLD}⚡ Starting Nova Agent...${NC}"
 echo -e "${BLUE}→${NC} Launching proot Ubuntu container"
 echo -e "${BLUE}→${NC} Logs: ${CYAN}/tmp/autogpt.log${NC}"
 echo -e "${BLUE}→${NC} Web dashboard: ${CYAN}http://localhost:8000${NC}"
@@ -41,7 +41,7 @@ proot-distro login ubuntu -- bash -c "
 
 sleep 1
 
-# ─── Start AutoGPT ───────────────────────────────────────────────────────────
+# ─── Start Nova Agent ───────────────────────────────────────────────────────────
 proot-distro login ubuntu -- bash -c "
     set -e
 
@@ -55,7 +55,7 @@ proot-distro login ubuntu -- bash -c "
     fi
 
     if [ ! -d \"\$CLASSIC_DIR\" ]; then
-        echo 'ERROR: AutoGPT not found. Run: autogptx setup'
+        echo 'ERROR: AutoGPT not found. Run: novax setup'
         exit 1
     fi
 
@@ -73,7 +73,7 @@ proot-distro login ubuntu -- bash -c "
     export TERM=xterm-256color
 
     echo '════════════════════════════════════════'
-    echo '  AutoGPT Agent Starting'
+    echo '  Nova Agent Starting'
     echo '  Press Ctrl+C to stop'
     echo '════════════════════════════════════════'
 
@@ -84,5 +84,5 @@ proot-distro login ubuntu -- bash -c "
 EXIT_CODE=$?
 if [ $EXIT_CODE -ne 0 ]; then
     echo -e "\n${RED}✗ AutoGPT exited with code ${EXIT_CODE}${NC}"
-    echo -e "${YELLOW}Check logs: autogptx logs${NC}"
+    echo -e "${YELLOW}Check logs: novax logs${NC}"
 fi

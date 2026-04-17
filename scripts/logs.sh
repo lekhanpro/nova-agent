@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# AutoGPT-Termux logs script
+# Nova Agent logs script
 # Tails the AutoGPT live log file. Ctrl+C to stop.
 #
 
@@ -14,7 +14,7 @@ NC='\033[0m'
 
 LOG_PATH='/tmp/autogpt.log'
 
-echo -e "${CYAN}${BOLD}AutoGPT Live Logs${NC}"
+echo -e "${CYAN}${BOLD}Nova Agent Live Logs${NC}"
 echo -e "${BLUE}─────────────────────────────────────────────${NC}"
 echo -e "  File: ${CYAN}${LOG_PATH}${NC} (inside Ubuntu container)"
 echo -e "  Press ${YELLOW}Ctrl+C${NC} to stop tailing"
@@ -27,7 +27,7 @@ FILE_EXISTS=$(proot-distro login ubuntu -- bash -c \
 
 if echo "$FILE_EXISTS" | grep -q "no"; then
     echo -e "${YELLOW}⚠ No log file yet.${NC}"
-    echo -e "  Start the agent first: ${CYAN}autogptx start${NC}"
+    echo -e "  Start the agent first: ${CYAN}novax start${NC}"
     echo -e "  Waiting for logs to appear..."
     echo ""
 fi

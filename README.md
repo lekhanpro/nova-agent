@@ -1,6 +1,6 @@
-# AutoGPT-Termux 🤖📱
+# Nova Agent 🤖📱
 
-> **Run AutoGPT AI Agent on Android — No root required.**
+> **Run Nova AI Agent on Android — No root required.**
 
 One-tap install that sets up AutoGPT Classic inside a proot-distro Ubuntu container on Termux. Supports OpenAI, Anthropic (Claude), and Google Gemini APIs.
 
@@ -39,14 +39,14 @@ One-tap install that sets up AutoGPT Classic inside a proot-distro Ubuntu contai
 Open Termux and paste:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/lekhanpro/autogpt-termux/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/lekhanpro/nova-agent/main/install.sh | bash
 ```
 
 ### Option B — npm global install
 
 ```bash
 pkg install nodejs-lts -y
-npm install -g autogpt-termux
+npm install -g nova-agent
 ```
 
 ---
@@ -54,17 +54,17 @@ npm install -g autogpt-termux
 ## 📖 Usage
 
 ```bash
-autogptx setup        # Install Ubuntu + Python 3.11 + AutoGPT (~5-15 min)
-autogptx configure    # Enter your API key (OpenAI / Anthropic / Gemini)
-autogptx start        # Launch the AutoGPT agent
-autogptx logs         # Watch live output (Ctrl+C to stop)
-autogptx status       # Check if agent is running
-autogptx stop         # Stop the agent
-autogptx restart      # Stop then start
-autogptx update       # Pull latest AutoGPT + reinstall deps
-autogptx shell        # Open a bash shell inside Ubuntu
-autogptx uninstall    # Remove everything
-autogptx help         # Show all commands
+novax setup        # Install Ubuntu + Python 3.11 + AutoGPT (~5-15 min)
+novax configure    # Enter your API key (OpenAI / Anthropic / Gemini)
+novax start        # Launch the AutoGPT agent
+novax logs         # Watch live output (Ctrl+C to stop)
+novax status       # Check if agent is running
+novax stop         # Stop the agent
+novax restart      # Stop then start
+novax update       # Pull latest AutoGPT + reinstall deps
+novax shell        # Open a bash shell inside Ubuntu
+novax uninstall    # Remove everything
+novax help         # Show all commands
 ```
 
 ---
@@ -81,12 +81,12 @@ You need at least one of:
 
 Set keys interactively:
 ```bash
-autogptx configure
+novax configure
 ```
 
 Or edit `.env` directly inside the container:
 ```bash
-autogptx shell
+novax shell
 nano /root/autogpt/.env
 ```
 
@@ -107,11 +107,11 @@ This shows live, color-coded logs updated every 2 seconds.
 ## 🏗️ Project Architecture
 
 ```
-autogpt-termux/
+nova-agent/
 ├── install.sh              ← one-liner installer (curl | bash)
 ├── package.json            ← npm package config
 ├── bin/
-│   └── autogptx.js         ← CLI entry point (node)
+│   └── novax.js         ← CLI entry point (node)
 ├── lib/
 │   ├── index.js            ← command dispatcher
 │   └── postinstall.js      ← npm postinstall hook
@@ -158,17 +158,17 @@ Android kills background processes to save battery. Disable this for Termux:
 
 | Problem | Fix |
 |---------|-----|
-| `proot-distro: command not found` | Run `autogptx setup` first |
-| `Ubuntu not installed` | Run `autogptx setup` |
-| API errors | Run `autogptx configure` and set your key |
+| `proot-distro: command not found` | Run `novax setup` first |
+| `Ubuntu not installed` | Run `novax setup` |
+| API errors | Run `novax configure` and set your key |
 | Out of memory | Close other apps; 3+ GB RAM recommended |
-| Setup fails at Python | Retry: `autogptx setup` is idempotent |
-| Agent exits immediately | Check logs: `autogptx logs` |
+| Setup fails at Python | Retry: `novax setup` is idempotent |
+| Agent exits immediately | Check logs: `novax logs` |
 | Port 8000 busy | Kill: `proot-distro login ubuntu -- pkill -f server.py` |
 
 ### Check logs manually
 ```bash
-autogptx shell
+novax shell
 tail -f /tmp/autogpt.log
 ```
 
@@ -185,7 +185,7 @@ tail -f /tmp/autogpt.log
 
 ## 📄 License
 
-MIT © autogpt-termux contributors
+MIT © nova-agent contributors
 
 ---
 
@@ -194,5 +194,5 @@ MIT © autogpt-termux contributors
 If this project helps you run AI agents on your phone, please ⭐ star it!
 
 ```
-curl -fsSL https://raw.githubusercontent.com/lekhanpro/autogpt-termux/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/lekhanpro/nova-agent/main/install.sh | bash
 ```

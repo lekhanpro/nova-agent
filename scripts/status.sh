@@ -9,7 +9,7 @@ CYAN='\033[0;36m'
 BOLD='\033[1m'
 NC='\033[0m'
 
-echo -e "${CYAN}${BOLD}AutoGPT Status${NC}"
+echo -e "${CYAN}${BOLD}Nova Agent Status${NC}"
 echo -e "─────────────────────────────────"
 
 RUNNING=0

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * autogptx — AutoGPT-Termux CLI
+ * novax — Nova Agent CLI
  * Entry point: dispatches commands to shell scripts inside scripts/
  */
 

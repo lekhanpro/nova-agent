@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# AutoGPT-Termux update script
+# Nova Agent update script
 # Pulls latest AutoGPT source and reinstalls Python deps
 #
 
@@ -38,7 +38,7 @@ proot-distro login ubuntu -- bash -c "
     set -e
     AUTOGPT_DIR='/root/autogpt'
     if [ ! -d \"\$AUTOGPT_DIR/.git\" ]; then
-        echo 'AutoGPT not cloned yet. Run: autogptx setup'
+        echo 'AutoGPT not cloned yet. Run: novax setup'
         exit 1
     fi
     cd \"\$AUTOGPT_DIR\"
@@ -68,8 +68,8 @@ ok "Dependencies updated"
 
 echo ""
 echo -e "${GREEN}${BOLD}════════════════════════════════════════════════${NC}"
-echo -e "${GREEN}${BOLD}  ✓ AutoGPT update complete!${NC}"
+echo -e "${GREEN}${BOLD}  ✓ Nova Agent update complete!${NC}"
 echo -e "${GREEN}${BOLD}════════════════════════════════════════════════${NC}"
 echo ""
-echo -e "  Start the agent: ${CYAN}autogptx start${NC}"
+echo -e "  Start the agent: ${CYAN}novax start${NC}"
 echo ""

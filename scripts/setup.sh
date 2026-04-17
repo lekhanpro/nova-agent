@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# AutoGPT-Termux Setup Script
+# Nova Agent Setup Script
 # Installs proot-distro Ubuntu + Python 3.11 + AutoGPT Classic
 # Runs inside Termux (no root required)
 #
@@ -42,7 +42,7 @@ fail() {
 # ─── Banner ───────────────────────────────────────────────────────────────────
 echo -e "${CYAN}${BOLD}"
 echo "╔════════════════════════════════════════════════════════╗"
-echo "║          AutoGPT-Termux Environment Setup              ║"
+echo "║          Nova Agent Environment Setup              ║"
 echo "║  Installing: proot-distro → Ubuntu → Python → AutoGPT  ║"
 echo "╚════════════════════════════════════════════════════════╝"
 echo -e "${NC}"
@@ -182,7 +182,7 @@ proot-distro login ubuntu -- bash -c "
             echo '.env created from template'
         else
             cat > .env << 'ENVEOF'
-# AutoGPT Configuration
+# Nova Agent Configuration
 OPENAI_API_KEY=your_openai_api_key_here
 ANTHROPIC_API_KEY=
 GOOGLE_API_KEY=
@@ -232,7 +232,7 @@ HTML_TEMPLATE = '''<!DOCTYPE html>
 <html><head>
 <meta charset=\"UTF-8\">
 <meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">
-<title>AutoGPT Live Logs</title>
+<title>Nova Agent Live Logs</title>
 <style>
 body{background:#0d0d0d;color:#e0e0e0;font-family:monospace;padding:16px;margin:0}
 h1{color:#7c3aed;font-size:1.2em}
@@ -262,7 +262,7 @@ setInterval(refresh,2000);
 window.onload=refresh;
 </script>
 </head><body>
-<h1>⚡ AutoGPT Live Logs</h1>
+<h1>⚡ Nova Agent Live Logs</h1>
 <div id="log">Loading...</div>
 </body></html>'''
 
@@ -274,7 +274,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
                 with open(LOG_FILE, 'r', errors='replace') as f:
                     data = f.read()
             except FileNotFoundError:
-                data = 'No logs yet. Start AutoGPT with: autogptx start'
+                data = 'No logs yet. Start Nova Agent with: novax start'
             body = data.encode()
             self.send_response(200)
             self.send_header('Content-Type', 'text/plain; charset=utf-8')
@@ -291,7 +291,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
 
 if __name__ == '__main__':
     server = http.server.HTTPServer(('0.0.0.0', PORT), Handler)
-    print(f'AutoGPT Log Viewer running at http://localhost:{PORT}')
+    print(f'Nova Agent Log Viewer running at http://localhost:{PORT}')
     server.serve_forever()
 PYEOF
     chmod +x /root/autogpt-web/server.py
@@ -302,12 +302,12 @@ ok "Log web viewer ready at localhost:8000"
 # ─── Complete ─────────────────────────────────────────────────────────────────
 echo ""
 echo -e "${GREEN}${BOLD}════════════════════════════════════════════════════════${NC}"
-echo -e "${GREEN}${BOLD}  ✓ AutoGPT setup complete! All ${TOTAL}/${TOTAL} steps done.${NC}"
+echo -e "${GREEN}${BOLD}  ✓ Nova Agent setup complete! All ${TOTAL}/${TOTAL} steps done.${NC}"
 echo -e "${GREEN}${BOLD}════════════════════════════════════════════════════════${NC}"
 echo ""
 echo -e "${YELLOW}Next steps:${NC}"
-echo -e "  1. Add your API key:  ${CYAN}autogptx configure${NC}"
-echo -e "  2. Start the agent:   ${CYAN}autogptx start${NC}"
-echo -e "  3. View live logs:    ${CYAN}autogptx logs${NC}"
-echo -e "  4. Open dashboard:    ${CYAN}autogptx status${NC}"
+echo -e "  1. Add your API key:  ${CYAN}novax configure${NC}"
+echo -e "  2. Start the agent:   ${CYAN}novax start${NC}"
+echo -e "  3. View live logs:    ${CYAN}novax logs${NC}"
+echo -e "  4. Open dashboard:    ${CYAN}novax status${NC}"
 echo ""

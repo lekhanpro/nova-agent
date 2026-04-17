@@ -1,12 +1,12 @@
 #!/bin/bash
-# AutoGPT stop script
+# Nova Agent stop script
 
 GREEN='\033[0;32m'
 RED='\033[0;31m'
 YELLOW='\033[1;33m'
 NC='\033[0m'
 
-echo -e "${YELLOW}⏹  Stopping AutoGPT...${NC}"
+echo -e "${YELLOW}⏹  Stopping Nova Agent...${NC}"
 
 # Kill inside proot Ubuntu
 proot-distro login ubuntu -- bash -c "
@@ -32,10 +32,10 @@ proot-distro login ubuntu -- bash -c "
     pkill -9 -f 'autogpt' 2>/dev/null || true
 
     if [ \$killed -eq 1 ]; then
-        echo 'AutoGPT stopped'
+        echo 'Nova Agent stopped'
     else
         echo 'No AutoGPT process was running'
     fi
 " 2>/dev/null || true
 
-echo -e "${GREEN}✓ AutoGPT stopped${NC}"
+echo -e "${GREEN}✓ Nova Agent stopped${NC}"

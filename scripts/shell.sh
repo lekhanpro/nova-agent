@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# AutoGPT-Termux shell script
+# Nova Agent shell script
 # Opens an interactive bash shell inside proot Ubuntu
 #
 
