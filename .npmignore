@@ -1,0 +1,8 @@
+# Files excluded from npm publish (but kept in git)
+.github/
+docs/
+assets/
+*.sh.bak
+*.log
+.DS_Store
+Thumbs.db

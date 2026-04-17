@@ -1,0 +1,12 @@
+# Normalize line endings
+* text=auto
+
+# Shell scripts must use LF (Unix line endings) — critical for bash on Android
+*.sh text eol=lf
+install.sh text eol=lf
+
+# JS / JSON use LF
+*.js text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.yml text eol=lf

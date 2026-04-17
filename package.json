@@ -1,0 +1,48 @@
+{
+  "name": "autogpt-termux",
+  "version": "1.0.0",
+  "description": "Run AutoGPT AI agent on Android — one-tap setup via Termux. No root required.",
+  "main": "lib/index.js",
+  "type": "module",
+  "bin": {
+    "autogptx": "bin/autogptx.js",
+    "autogpt-termux": "bin/autogptx.js"
+  },
+  "scripts": {
+    "test": "node lib/test.js",
+    "postinstall": "node lib/postinstall.js"
+  },
+  "keywords": [
+    "autogpt",
+    "termux",
+    "android",
+    "ai-agent",
+    "llm",
+    "python",
+    "proot",
+    "openai",
+    "anthropic",
+    "gemini"
+  ],
+  "author": "autogpt-termux contributors",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lekhanpro/autogpt-termux.git"
+  },
+  "homepage": "https://github.com/lekhanpro/autogpt-termux#readme",
+  "bugs": {
+    "url": "https://github.com/lekhanpro/autogpt-termux/issues"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "os": [
+    "android",
+    "linux"
+  ],
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "ora": "^8.0.1"
+  }
+}
