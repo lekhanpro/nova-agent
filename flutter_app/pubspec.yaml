@@ -1,4 +1,4 @@
-name: nova-agent
+name: nova_agent
 description: Run AutoGPT AI Agent on Android — standalone Flutter app with built-in
   terminal, live log dashboard, and one-tap setup. No root required.
 version: 1.0.0+1
