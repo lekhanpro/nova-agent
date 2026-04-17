@@ -14,9 +14,6 @@ jobs:
   build-apk:
     name: Build APK
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: flutter_app
 
     steps:
       - name: Checkout
@@ -35,48 +32,90 @@ jobs:
           channel: stable
           cache: true
 
+      # Bootstrap: create a valid Flutter project, then overlay our source
+      - name: Bootstrap Flutter project
+        run: |
+          # Create a minimal valid Flutter Android project in a temp dir
+          flutter create \
+            --project-name nova_agent \
+            --org com.novaagent \
+            --platforms android \
+            --no-pub \
+            /tmp/nova_bootstrap
+
+          # Copy the generated android directory (gradlew, gradle wrapper jar, settings.gradle etc.)
+          cp -r /tmp/nova_bootstrap/android/. flutter_app/android/
+
+          # Restore our custom files (they overwrite the generated ones)
+          git checkout -- flutter_app/android/app/build.gradle
+          git checkout -- flutter_app/android/app/src/main/AndroidManifest.xml
+          git checkout -- "flutter_app/android/app/src/main/kotlin/com/novaagent/app/"
+          git checkout -- flutter_app/android/build.gradle
+          git checkout -- flutter_app/android/gradle.properties
+          git checkout -- flutter_app/android/gradle/wrapper/gradle-wrapper.properties
+
+          # Ensure gradlew is executable
+          chmod +x flutter_app/android/gradlew
+
+          # Write local.properties required by Gradle
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > flutter_app/android/local.properties
+          echo "flutter.sdk=$(which flutter | xargs dirname | xargs dirname)" >> flutter_app/android/local.properties
+
+          echo "Bootstrap done. Files:"
+          ls -la flutter_app/android/
+
       - name: Get dependencies
+        working-directory: flutter_app
         run: flutter pub get
 
       - name: Analyze
+        working-directory: flutter_app
         run: flutter analyze --no-fatal-infos || true
 
-      - name: Build APK (release)
+      - name: Build split APKs (arm64, arm, x86_64)
+        working-directory: flutter_app
         run: |
           flutter build apk \
             --release \
             --target-platform android-arm64,android-arm,android-x64 \
             --split-per-abi
 
-      - name: Rename APKs with version
-        id: rename
+      - name: Build universal APK
+        working-directory: flutter_app
+        run: flutter build apk --release
+
+      - name: Collect & rename APKs
+        id: collect
         run: |
-          VERSION=$(grep '^version:' pubspec.yaml | cut -d' ' -f2 | cut -d'+' -f1)
+          VERSION=$(grep '^version:' flutter_app/pubspec.yaml | cut -d' ' -f2 | cut -d'+' -f1)
           echo "version=$VERSION" >> $GITHUB_OUTPUT
-          mkdir -p ../release-apks
-          # ARM64 (most Android phones)
-          cp build/app/outputs/flutter-apk/app-arm64-v8a-release.apk \
-             ../release-apks/nova-agent-v${VERSION}-arm64.apk || true
-          # ARMv7 (older phones)
-          cp build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk \
-             ../release-apks/nova-agent-v${VERSION}-arm.apk || true
-          # x86_64 (emulators)
-          cp build/app/outputs/flutter-apk/app-x86_64-release.apk \
-             ../release-apks/nova-agent-v${VERSION}-x86_64.apk || true
-          # Universal fat APK
-          flutter build apk --release
-          cp build/app/outputs/flutter-apk/app-release.apk \
-             ../release-apks/nova-agent-v${VERSION}-universal.apk
-          ls -lh ../release-apks/
+          mkdir -p release-apks
+
+          # Split APKs
+          for arch in arm64-v8a armeabi-v7a x86_64; do
+            src="flutter_app/build/app/outputs/flutter-apk/app-${arch}-release.apk"
+            if [ -f "$src" ]; then
+              name=$(echo "$arch" | sed 's/arm64-v8a/arm64/;s/armeabi-v7a/arm/;s/x86_64/x86_64/')
+              cp "$src" "release-apks/nova-agent-v${VERSION}-${name}.apk"
+              echo "  ✓ $name"
+            fi
+          done
+
+          # Universal
+          cp "flutter_app/build/app/outputs/flutter-apk/app-release.apk" \
+             "release-apks/nova-agent-v${VERSION}-universal.apk"
+
+          echo "Built APKs:"
+          ls -lh release-apks/
 
       - name: Upload APK artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: nova-agent-apks
+          name: nova-agent-apks-${{ github.sha }}
           path: release-apks/*.apk
-          retention-days: 14
+          retention-days: 30
 
-  # ─── GitHub Release (only on version tags) ───────────────────────────────────
+  # ─── GitHub Release (on version tags only) ─────────────────────────────────
   release:
     name: Create GitHub Release
     needs: build-apk
@@ -89,58 +128,63 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Download built APKs
+      - name: Download APKs
         uses: actions/download-artifact@v4
         with:
-          name: nova-agent-apks
+          name: nova-agent-apks-${{ github.sha }}
           path: release-apks/
 
-      - name: Extract version and changelog
+      - name: Get version
         id: meta
-        run: |
-          VERSION="${GITHUB_REF_NAME}"
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          # Extract this version's section from CHANGELOG.md
-          NOTES=$(awk "/^## \[${VERSION#v}\]/{found=1; next} found && /^## \[/{exit} found{print}" CHANGELOG.md)
-          if [ -z "$NOTES" ]; then
-            NOTES="See [CHANGELOG.md](CHANGELOG.md) for details."
-          fi
-          echo "notes<<EOF" >> $GITHUB_OUTPUT
-          echo "$NOTES" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+        run: echo "version=${GITHUB_REF_NAME}" >> $GITHUB_OUTPUT
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
-          name: Nova Agent ${{ github.ref_name }}
+          name: "Nova Agent ${{ github.ref_name }}"
           body: |
-            ## Nova Agent ${{ github.ref_name }}
+            ## Nova Agent ${{ github.ref_name }} 🤖📱
 
-            **Your AI assistant with native Android superpowers** 📱🤖
+            **Your AI assistant with native Android superpowers.**
 
-            ${{ steps.meta.outputs.notes }}
+            Give an AI real control over your Android phone — camera, GPS, SMS, notifications, contacts, TTS, clipboard, WiFi, torch, and more — via Termux:API.
 
             ---
 
-            ### 📥 Download
+            ### 📥 Download APK
 
-            | APK | Architecture | Use for |
-            |-----|-------------|---------|
-            | `nova-agent-*-arm64.apk` | ARM64 | Most modern phones (recommended) |
-            | `nova-agent-*-arm.apk` | ARMv7 | Older phones |
+            | File | Architecture | Use for |
+            |------|-------------|---------|
+            | `nova-agent-*-arm64.apk` | ARM64-v8a | ✅ Most modern phones (2018+) |
+            | `nova-agent-*-arm.apk` | ARMv7 | Older 32-bit phones |
             | `nova-agent-*-x86_64.apk` | x86_64 | Emulators |
-            | `nova-agent-*-universal.apk` | All | If unsure |
+            | `nova-agent-*-universal.apk` | All | If unsure which to pick |
 
-            ### ⚡ Quick Install (CLI — no APK needed)
+            > Enable "Install from unknown sources" in Android Settings before installing.
+
+            ---
+
+            ### ⚡ CLI Install (no APK needed)
             ```bash
             curl -fsSL https://raw.githubusercontent.com/lekhanpro/nova-agent/main/install.sh | bash
             ```
 
-            ### Requirements
-            - Android 7.0+ (API 24+)
-            - [Termux](https://f-droid.org/en/packages/com.termux/) from F-Droid
-            - [Termux:API](https://f-droid.org/en/packages/com.termux.api/) for Android tools
+            ### Also install Termux:API
+            Required for Android tool access: https://f-droid.org/en/packages/com.termux.api/
+
+            ---
+
+            ### Example Queries
+            ```bash
+            novax ask "What's my battery level?"
+            novax ask "Take a selfie and describe it"
+            novax ask "Where am I right now?"
+            novax ask "Read my last 5 SMS messages"
+            novax ask "Turn on the flashlight"
+            ```
+
+            Full changelog: [CHANGELOG.md](https://github.com/lekhanpro/nova-agent/blob/main/CHANGELOG.md)
           files: release-apks/*.apk
           draft: false
           prerelease: false
