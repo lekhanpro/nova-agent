@@ -1,6 +1,6 @@
 name: nova_agent
-description: Run AutoGPT AI Agent on Android — standalone Flutter app with built-in
-  terminal, live log dashboard, and one-tap setup. No root required.
+description: Run AI Agent on Android with native superpowers — camera, GPS, SMS,
+  notifications, and more. No root required.
 version: 1.0.0+1
 
 environment:
@@ -10,52 +10,27 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_localizations:
-    sdk: flutter
-
-  # Terminal emulator
-  xterm: ^4.2.0
-
-  # WebView for web dashboard
-  webview_flutter: ^4.4.4
 
   # State management
   provider: ^6.1.1
-
-  # HTTP
-  http: ^1.2.0
 
   # Storage / prefs
   shared_preferences: ^2.2.2
 
   # Permissions
-  permission_handler: ^11.1.0
+  permission_handler: ^11.3.0
 
   # UI
-  flutter_svg: ^2.0.9
   google_fonts: ^6.1.0
   cupertino_icons: ^1.0.6
-  lottie: ^3.0.0
-  shimmer: ^3.0.0
 
-  # Icons
-  material_symbols_icons: ^4.2719.1
+  # HTTP (for log fetching)
+  http: ^1.2.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^4.0.0
+  flutter_lints: ^3.0.0
 
 flutter:
   uses-material-design: true
-
-  assets:
-    - assets/
-    - assets/animations/
-
-  fonts:
-    - family: JetBrainsMono
-      fonts:
-        - asset: assets/fonts/JetBrainsMono-Regular.ttf
-        - asset: assets/fonts/JetBrainsMono-Bold.ttf
-          weight: 700
