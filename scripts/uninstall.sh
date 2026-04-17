@@ -1,8 +1,5 @@
 #!/bin/bash
-#
-# Nova Agent uninstall script
-# Removes proot Ubuntu container and all Nova Agent data
-#
+# novax uninstall — remove nova_agent.py and config
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -12,36 +9,26 @@ BOLD='\033[1m'
 NC='\033[0m'
 
 echo -e "${RED}${BOLD}"
-echo "╔═════════════════════════════════════════════╗"
-echo "║         Nova Agent  ·  Uninstall        ║"
-echo "╚═════════════════════════════════════════════╝"
+echo "╔═══════════════════════════════════════════╗"
+echo "║       Nova Agent  ·  Uninstall            ║"
+echo "╚═══════════════════════════════════════════╝"
 echo -e "${NC}"
-echo -e "${RED}⚠ WARNING: This will permanently delete:${NC}"
-echo -e "  • The Ubuntu proot container (~1-2 GB)"
-echo -e "  • All Nova Agent data, memory, and logs"
-echo -e "  • API keys stored in .env"
+echo -e "${RED}⚠ This will remove:${NC}"
+echo -e "  • ${YELLOW}$PREFIX/lib/nova_agent.py${NC}"
+echo -e "  • ${YELLOW}~/.nova_agent/config.json${NC} (API keys + settings)"
 echo ""
-read -r -p "Are you sure? Type 'yes' to confirm: " confirm
+read -r -p "Type 'yes' to confirm: " confirm
 
 if [ "$confirm" != "yes" ]; then
     echo -e "${YELLOW}↷ Uninstall cancelled.${NC}"
     exit 0
 fi
 
-echo ""
-echo -e "${YELLOW}Stopping agent...${NC}"
-proot-distro login ubuntu -- bash -c "
-    pkill -9 -f 'autogpt' 2>/dev/null || true
-    pkill -9 -f 'server.py' 2>/dev/null || true
-" 2>/dev/null || true
+rm -f "$PREFIX/lib/nova_agent.py" && echo -e "${GREEN}✓ nova_agent.py removed${NC}"
+rm -rf "$HOME/.nova_agent"        && echo -e "${GREEN}✓ Config removed${NC}"
 
-echo -e "${YELLOW}Removing Ubuntu container...${NC}"
-proot-distro remove ubuntu --force 2>/dev/null || \
-    proot-distro remove ubuntu 2>/dev/null || true
-
-echo -e "${GREEN}✓ Ubuntu container removed${NC}"
 echo ""
-echo -e "${YELLOW}To remove the novax CLI itself:${NC}"
+echo -e "${YELLOW}To also remove the npm package:${NC}"
 echo -e "  ${CYAN}npm uninstall -g nova-agent${NC}"
 echo ""
 echo -e "${GREEN}Done. Thanks for using Nova Agent!${NC}"

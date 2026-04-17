@@ -2,149 +2,246 @@
 
 <div align="center">
 
-<img src="assets/banner.svg" alt="Nova Agent Banner" width="100%">
-
-[![npm version](https://img.shields.io/npm/v/nova-agent?color=7C3AED&style=flat-square)](https://www.npmjs.com/package/nova-agent)
+[![npm version](https://img.shields.io/npm/v/nova-agent?color=7C3AED&style=flat-square&logo=npm)](https://www.npmjs.com/package/nova-agent)
 [![License: MIT](https://img.shields.io/badge/License-MIT-7C3AED.svg?style=flat-square)](LICENSE)
 [![Android](https://img.shields.io/badge/Android-7.0%2B-3DDC84?style=flat-square&logo=android&logoColor=white)](https://android.com)
-[![Node.js](https://img.shields.io/badge/Node.js-%3E%3D18-339933?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org)
-[![CI](https://img.shields.io/github/actions/workflow/status/lekhanpro/nova-agent/ci.yml?style=flat-square&label=CI)](https://github.com/lekhanpro/nova-agent/actions)
+[![Python](https://img.shields.io/badge/Python-3.8%2B-3776AB?style=flat-square&logo=python&logoColor=white)](https://python.org)
+[![CI](https://img.shields.io/github/actions/workflow/status/lekhanpro/nova-agent/ci.yml?label=CI&style=flat-square)](https://github.com/lekhanpro/nova-agent/actions)
 [![GitHub stars](https://img.shields.io/github/stars/lekhanpro/nova-agent?style=flat-square&color=7C3AED)](https://github.com/lekhanpro/nova-agent/stargazers)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](CONTRIBUTING.md)
 
-**Run AutoGPT AI Agent on Android — one-tap setup via Termux. No root required.**
+**The AI agent that actually controls your Android phone.**
 
-Supports OpenAI GPT-4o · Anthropic Claude · Google Gemini
+No root. No complex setup. Just `pip install openai` and you're running.
 
-[**Quick Start**](#-quick-start) · [**CLI Usage**](#-cli-usage) · [**Flutter App**](#-flutter-app) · [**Architecture**](#-architecture) · [**Troubleshooting**](#-troubleshooting)
+[**Quick Start**](#-quick-start) · [**Android Tools**](#-android-tools) · [**Examples**](#-real-examples) · [**CLI**](#-cli-reference) · [**Flutter App**](#-flutter-app) · [**Contributing**](#-contributing)
 
 </div>
 
 ---
 
-## ✨ Features
+## What Makes Nova Agent Different?
 
-| Feature | Description |
-|---------|-------------|
-| 🚀 **One-command install** | `curl \| bash` or `npm install -g nova-agent` |
-| 🔒 **No root required** | Sandboxed Ubuntu via `proot-distro` |
-| 🤖 **AutoGPT Classic** | Full agent with goals, memory, and tools |
-| 🔑 **Multi-provider** | OpenAI, Anthropic Claude, Google Gemini |
-| 📊 **Live web dashboard** | Color-coded log viewer at `localhost:8000` |
-| 📱 **Flutter App** | Native Android UI with terminal & status controls |
-| 🔔 **Foreground service** | Keeps agent alive with persistent notification |
-| 🛠️ **Full CLI** | 10 commands: setup, start, stop, logs, configure… |
-| 🏗️ **ARM64 + x86_64** | Tested on Snapdragon, Exynos, and emulators |
+Most "AI on Android" projects just run a chatbot in a terminal. 
 
----
+**Nova Agent gives the AI real control over your Android phone** via [Termux:API](https://wiki.termux.com/wiki/Termux:API):
 
-## 📋 Requirements
+```
+You: "Take a selfie, describe it, and send me a notification with the description"
 
-| Component | Minimum |
-|-----------|---------|
-| Android | 7.0+ (API 24+) |
-| [Termux](https://f-droid.org/en/packages/com.termux/) | Latest from **F-Droid** |
-| Storage | ~2 GB free |
-| RAM | 2 GB+ recommended (3 GB+ for large models) |
-| Network | Required for initial setup & API calls |
+Nova Agent: ⚡ take_photo(camera_id=1)
+            → Photo saved to /sdcard/nova_agent_20260417_214532.jpg
+            ⚡ send_notification(title="Selfie Analysis", message="You look focused...")
+            → Notification sent
 
-> ⚠️ **Install Termux from [F-Droid](https://f-droid.org/en/packages/com.termux/)** — the Play Store version is outdated and unsupported.
+◆ Done! I took a selfie with your front camera. You appear to be indoors in
+  good lighting, looking focused at a screen. I sent the analysis to your
+  notification bar.
+```
+
+No cloud uploads. Everything runs on your device.
 
 ---
 
-## 🚀 Quick Start
+## 🛠️ Android Tools
 
-### Option A — One-liner *(recommended)*
+| Tool | Termux:API Command | What the AI can do |
+|------|-------------------|-------------------|
+| 📷 `take_photo` | `termux-camera-photo` | Take front/back camera photos |
+| 📍 `get_location` | `termux-location` | GPS coordinates + Google Maps link |
+| 💬 `list_sms` | `termux-sms-list` | Read recent text messages |
+| 🔋 `get_battery` | `termux-battery-status` | Level, charging status, health, temp |
+| 📇 `get_contacts` | `termux-contact-list` | Search and list contacts |
+| 📋 `read_clipboard` | `termux-clipboard-get` | Read clipboard content |
+| 📋 `set_clipboard` | `termux-clipboard-set` | Copy text to clipboard |
+| 🔔 `send_notification` | `termux-notification` | Push notifications |
+| 🔊 `text_to_speech` | `termux-tts-speak` | Speak responses aloud |
+| 📶 `get_wifi_info` | `termux-wifi-connectioninfo` | SSID, IP, signal strength |
+| 📳 `vibrate` | `termux-vibrate` | Haptic feedback |
+| 💡 `torch` | `termux-torch` | Flashlight on/off |
+| 🖥️ `run_shell` | bash | Safe shell commands |
+| 📱 `get_device_info` | system | Arch, kernel, storage |
 
-Open Termux and paste:
+> **14 tools today. More coming.** [Contribute a tool →](CONTRIBUTING.md)
+
+---
+
+## ⚡ Quick Start
+
+### 1. Install (30 seconds)
 
 ```bash
+# In Termux:
 curl -fsSL https://raw.githubusercontent.com/lekhanpro/nova-agent/main/install.sh | bash
 ```
 
-### Option B — npm global install
-
+Or via npm:
 ```bash
-pkg install nodejs-lts -y
-npm install -g nova-agent
+pkg install nodejs-lts -y && npm install -g nova-agent
 ```
 
-Then follow the steps:
+### 2. Install Termux:API companion app
+
+Install from **[F-Droid](https://f-droid.org/en/packages/com.termux.api/)** (required for Android tools).
+
+### 3. Configure your API key
 
 ```bash
-novax setup        # 1. Install Ubuntu + Python 3.11 + AutoGPT (~5-15 min)
-novax configure    # 2. Enter your API key
-novax start        # 3. Launch the agent 🚀
+novax configure
+```
+
+Supports **OpenAI**, **Anthropic Claude**, and **Google Gemini** (free tier available).
+
+### 4. Start asking
+
+```bash
+novax ask "What's my battery level?"
+# → Battery: 87% | Status: Discharging | Health: Good | Temp: 32.1°C
+
+novax ask "Where am I?"
+# → Location: 12.9716, 77.5946 (accuracy: 8m)
+#   Maps: https://maps.google.com/?q=12.9716,77.5946
+
+novax start   # interactive chat mode
 ```
 
 ---
 
-## 📖 CLI Usage
+## 🎮 Real Examples
 
 ```bash
-novax setup        # Install proot Ubuntu + Python 3.11 + AutoGPT
-novax configure    # Interactive API key wizard (OpenAI / Anthropic / Gemini)
-novax start        # Launch AutoGPT agent + web log viewer
-novax stop         # Stop the running agent
-novax restart      # Stop then start
-novax status       # Show process status + recent log lines
-novax logs         # Tail live logs (Ctrl+C to stop)
-novax update       # Pull latest AutoGPT source + reinstall deps
-novax shell        # Open bash shell inside Ubuntu container
-novax uninstall    # Remove everything (with confirmation)
-novax help         # Show this help
+# Morning briefing
+novax ask "Give me a briefing: battery level, WiFi status, and read my last 3 SMS"
+
+# Find your phone
+novax ask "Turn on the torch, vibrate 3 times, and tell me my GPS location"
+
+# Smart clipboard
+novax ask "Read my clipboard and improve the grammar of whatever text is there, then copy the fixed version"
+
+# Photo analysis
+novax ask "Take a photo with my back camera and tell me what's in the room"
+
+# Security check
+novax ask "Take a selfie, check my battery, and notify me if battery is below 20%"
+
+# Developer
+novax ask "Run 'df -h' and summarize my storage situation"
+novax ask "Check my WiFi signal and tell me if it's good enough for video calls"
+```
+
+---
+
+## 📖 CLI Reference
+
+```
+novax setup        Install Python deps + Termux:API integration (~5 min)
+novax configure    Set AI provider, model, and API key
+novax start        Interactive chat mode
+novax ask "..."    One-shot query (great for scripts/shortcuts)
+novax status       Show agent status and config
+novax update       Update nova_agent.py to latest version
+novax version      Show version
+novax help         Show all commands
+```
+
+### Run from Termux Shortcuts (Termux:Widget)
+
+```bash
+# ~/.shortcuts/nova_battery
+#!/bin/bash
+result=$(novax ask "Battery level and status")
+termux-notification --title "Battery" --content "$result"
 ```
 
 ---
 
 ## 🔑 API Keys
 
-You need **at least one**:
+| Provider | Free Tier | Get Key |
+|----------|-----------|---------|
+| **Google Gemini** | ✅ Yes | [aistudio.google.com](https://aistudio.google.com/app/apikey) |
+| **OpenAI** | ❌ Paid | [platform.openai.com](https://platform.openai.com/api-keys) |
+| **Anthropic** | ❌ Paid | [console.anthropic.com](https://console.anthropic.com/) |
 
-| Provider | Get Key | Env Var |
-|----------|---------|---------|
-| OpenAI (GPT-4o) | [platform.openai.com](https://platform.openai.com/api-keys) | `OPENAI_API_KEY` |
-| Anthropic (Claude) | [console.anthropic.com](https://console.anthropic.com/) | `ANTHROPIC_API_KEY` |
-| Google Gemini | [aistudio.google.com](https://aistudio.google.com/app/apikey) | `GOOGLE_API_KEY` |
-
-```bash
-novax configure    # Interactive wizard — set keys, choose model & memory backend
-```
-
-Or edit directly:
-```bash
-novax shell
-nano /root/autogpt/.env
-```
+> 💡 **Start free with Gemini 1.5 Flash** — fast, capable, and has a generous free tier.
 
 ---
 
-## 🖥️ Web Dashboard
+## 📋 Requirements
 
-Once running, open any browser at:
+| Component | Details |
+|-----------|---------|
+| Android | 7.0+ (API 24+) |
+| [Termux](https://f-droid.org/en/packages/com.termux/) | From **F-Droid** (not Play Store) |
+| [Termux:API](https://f-droid.org/en/packages/com.termux.api/) | For Android hardware tools |
+| Storage | ~200 MB (simple mode) |
+| Python | 3.8+ (via `pkg install python`) |
+
+> ⚠️ Install Termux and Termux:API from **[F-Droid](https://f-droid.org)** — the Play Store versions are outdated.
+
+---
+
+## 🏗️ Architecture
 
 ```
-http://localhost:8000
+┌──────────────────────────────────────────────────────┐
+│  Termux (Android user space)                          │
+│                                                       │
+│  nova_agent.py                                        │
+│  ┌─────────────────────────────────────────────────┐ │
+│  │  Interactive REPL / One-shot mode               │ │
+│  │  ↓                                              │ │
+│  │  AI Provider (OpenAI / Anthropic / Gemini)      │ │
+│  │  ↓  function_calling / tool_use                 │ │
+│  │  Tool Dispatcher (14 Android tools)             │ │
+│  └──────────────┬──────────────────────────────────┘ │
+│                 │                                     │
+│  ┌──────────────▼──────────────────────────────────┐ │
+│  │  Termux:API (termux-camera, termux-location,    │ │
+│  │  termux-sms-list, termux-battery-status, ...)   │ │
+│  └──────────────┬──────────────────────────────────┘ │
+└─────────────────┼────────────────────────────────────┘
+                  │
+┌─────────────────▼────────────────────────────────────┐
+│  Android Hardware                                     │
+│  Camera · GPS · SMS · Contacts · Sensors · Torch     │
+└──────────────────────────────────────────────────────┘
 ```
 
-Color-coded real-time logs, updated every 2 seconds.
+```
+nova-agent/
+├── nova_agent.py           ← core agent (14 Android tools + AI loop)
+├── install.sh              ← one-liner installer
+├── package.json            ← npm package
+├── bin/novax.js            ← CLI entry point
+├── lib/index.js            ← command dispatcher
+├── scripts/
+│   ├── setup.sh            ← install deps + Termux:API
+│   ├── configure.sh        ← API key wizard
+│   ├── start.sh            ← interactive mode
+│   ├── ask.sh              ← one-shot query
+│   ├── status.sh           ← show config + status
+│   ├── update.sh           ← update agent script
+│   └── ...
+└── flutter_app/            ← optional native Android UI
+    ├── pubspec.yaml
+    ├── lib/ (screens, providers, services)
+    └── android/ (Kotlin native bridge)
+```
 
 ---
 
 ## 📱 Flutter App
 
-A native Android app that wraps the CLI with a beautiful UI.
+A native Android companion app with a beautiful UI.
 
-### Features
-- **One-Tap Setup** — animated 8-step progress wizard
-- **Dashboard** — start/stop agent with live status indicator
-- **Live Logs** — color-coded log viewer with auto-scroll
-- **Terminal** — built-in monospace terminal display
-- **Configure** — API key guide with provider docs
-- **Settings** — auto-start, battery optimization, system info
-- **Foreground Service** — keeps agent alive in background
-- **Kotlin Native Bridge** — shell execution, process management, battery control
+- 🔘 **Dashboard** — start/stop agent, status indicator
+- 📋 **Live output** — color-coded agent responses
+- ⚙️ **Settings** — provider, model, API key
+- 🔔 **Foreground Service** — keeps agent alive in background
 
-### Build from source
+**Build from source:**
 ```bash
 cd flutter_app
 flutter pub get
@@ -153,95 +250,13 @@ flutter build apk --release
 
 ---
 
-## 🏗️ Architecture
-
-```
-┌─────────────────────────────────────────────────────────┐
-│                Flutter App (Dart)                        │
-│  ┌──────────┐  ┌──────────┐  ┌────────┐  ┌──────────┐  │
-│  │ Dashboard│  │ Terminal │  │  Logs  │  │ Settings │  │
-│  └────┬─────┘  └────┬─────┘  └───┬────┘  └────┬─────┘  │
-│       └─────────────┴────────────┴─────────────┘         │
-│                      Provider Layer                       │
-│              GatewayProvider · SetupProvider              │
-│  ┌────────────────────────────────────────────────────┐  │
-│  │        Native Bridge (Kotlin MethodChannel)         │  │
-│  │  Shell · Process · Logs · Battery · ForegroundSvc  │  │
-│  └─────────────────────┬──────────────────────────────┘  │
-└────────────────────────┼────────────────────────────────┘
-                         │
-┌────────────────────────┼────────────────────────────────┐
-│            proot-distro Ubuntu container                  │
-│  ┌──────────────────────────────────────────────────┐    │
-│  │  Python 3.11 venv                                 │    │
-│  │  ┌─────────────────────────────────────────────┐ │    │
-│  │  │  AutoGPT Classic Agent                       │ │    │
-│  │  │  /tmp/autogpt.log  ←  log web viewer :8000  │ │    │
-│  │  └─────────────────────────────────────────────┘ │    │
-│  └──────────────────────────────────────────────────┘    │
-└──────────────────────────────────────────────────────────┘
-```
-
-```
-nova-agent/
-├── install.sh                 ← one-liner installer (curl | bash)
-├── package.json               ← npm package config
-├── bin/
-│   └── novax.js               ← CLI entry point
-├── lib/
-│   ├── index.js               ← command dispatcher + help
-│   └── postinstall.js         ← npm postinstall chmod hook
-├── scripts/
-│   ├── setup.sh               ← 8-step Ubuntu + AutoGPT installer
-│   ├── configure.sh           ← interactive API key wizard
-│   ├── start.sh               ← launch agent + web viewer
-│   ├── stop.sh                ← graceful stop + force kill
-│   ├── status.sh              ← process & port health check
-│   ├── logs.sh                ← tail live logs from container
-│   ├── update.sh              ← git pull + pip reinstall
-│   ├── shell.sh               ← open Ubuntu bash shell
-│   └── uninstall.sh           ← destroy container + confirmation
-└── flutter_app/
-    ├── pubspec.yaml           ← Flutter dependencies
-    ├── lib/
-    │   ├── main.dart          ← app entry + dark theme
-    │   ├── constants.dart     ← all app constants
-    │   ├── providers/         ← GatewayProvider, SetupProvider
-    │   ├── screens/           ← Splash, Setup, Dashboard, Logs, Terminal, Settings
-    │   └── services/          ← NativeBridge, GatewayService, BootstrapService
-    └── android/
-        └── .../kotlin/com/novaagent/app/
-            ├── MainActivity.kt              ← Flutter entry
-            ├── NativeBridgePlugin.kt        ← MethodChannel + EventChannel
-            └── NovaAgentForegroundService.kt ← background keep-alive
-```
-
----
-
-## 🔧 What `setup` Does
-
-The 8-step setup script:
-
-1. **Update** Termux packages (`pkg update`)
-2. **Install** `proot-distro`, `nodejs-lts`, `git`, `curl`
-3. **Install Ubuntu** rootfs via proot-distro (~500 MB)
-4. **Install Python 3.11** + build tools inside Ubuntu
-5. **Clone** [AutoGPT/AutoGPT](https://github.com/Significant-Gravitas/AutoGPT) repository
-6. **Create virtualenv** + install Python dependencies
-7. **Configure `.env`** with Termux-compatible defaults
-8. **Install web log viewer** (Python HTTP server on port 8000)
-
-Setup is **idempotent** — safe to re-run if anything fails.
-
----
-
 ## 📱 Battery Optimization
 
-Android aggressively kills background processes. Disable this for Termux:
+Android kills background processes. Disable battery optimization for Termux:
 
-1. **Settings** → **Apps** → **Termux**
-2. **Battery** → **Unrestricted**
-3. Optionally install [Termux:Boot](https://f-droid.org/en/packages/com.termux.boot/) to auto-start on reboot
+**Settings → Apps → Termux → Battery → Unrestricted**
+
+Or install [Termux:Boot](https://f-droid.org/en/packages/com.termux.boot/) for auto-start on reboot.
 
 ---
 
@@ -249,30 +264,34 @@ Android aggressively kills background processes. Disable this for Termux:
 
 | Problem | Solution |
 |---------|----------|
-| `proot-distro: not found` | Run `novax setup` first |
-| `Ubuntu not installed` | Run `novax setup` |
-| API errors in logs | Run `novax configure` and enter key |
-| Setup fails at Python | Retry — setup is idempotent |
-| Agent exits immediately | Check: `novax logs` |
-| Port 8000 busy | `novax shell` → `pkill -f server.py` |
-| Killed in background | Disable battery optimization (see above) |
-
-### Manual log check
-```bash
-novax shell
-tail -f /tmp/autogpt.log
-```
+| `termux-battery-status: command not found` | Install [Termux:API app](https://f-droid.org/en/packages/com.termux.api/) from F-Droid |
+| `openai: No module named` | Run `pip install openai` |
+| `No API key configured` | Run `novax configure` |
+| `Permission denied` (camera/SMS) | Open Termux:API app and grant permissions |
+| GPS returns `null` | Go outside or use `network` provider: `termux-location -p network` |
+| SMS permission denied | Grant SMS permission to **Termux:API** app (not Termux) |
 
 ---
 
 ## 🤝 Contributing
 
-1. Fork the repository
-2. Create a branch: `git checkout -b feat/my-feature`
-3. Test on a real Android device with Termux (or an x86_64 emulator)
-4. Submit a pull request
+**Adding a new Android tool is the easiest contribution and makes the biggest impact.**
 
-Please read [CHANGELOG.md](CHANGELOG.md) before contributing.
+Termux:API has 40+ commands waiting to be added — sensors, NFC, microphone, call logs, media player, and more.
+
+👉 **[Read the Contributing Guide →](CONTRIBUTING.md)**
+
+```bash
+# Tools waiting for contributors:
+termux-sensor          # accelerometer, gyroscope
+termux-microphone-record  # audio recording
+termux-nfc             # NFC tag reading
+termux-call-log        # call history
+termux-media-player    # music control
+termux-dialog          # native Android dialogs
+termux-volume          # volume control
+termux-brightness      # screen brightness
+```
 
 ---
 
@@ -286,10 +305,12 @@ MIT © [lekhanpro](https://github.com/lekhanpro)
 
 Made with ❤️ for the Android community
 
-⭐ Star this repo if it helps you run AI on your phone!
+**Give your AI real Android superpowers — for free.**
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/lekhanpro/nova-agent/main/install.sh | bash
 ```
+
+⭐ Star this repo if Nova Agent helps you!
 
 </div>
