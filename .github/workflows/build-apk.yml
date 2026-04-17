@@ -1,0 +1,147 @@
+name: Build & Release APK
+
+on:
+  push:
+    branches: [main]
+    tags:
+      - 'v*.*.*'
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  # ─── Build Flutter APK ───────────────────────────────────────────────────────
+  build-apk:
+    name: Build APK
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: flutter_app
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.22.0'
+          channel: stable
+          cache: true
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Analyze
+        run: flutter analyze --no-fatal-infos || true
+
+      - name: Build APK (release)
+        run: |
+          flutter build apk \
+            --release \
+            --target-platform android-arm64,android-arm,android-x64 \
+            --split-per-abi
+
+      - name: Rename APKs with version
+        id: rename
+        run: |
+          VERSION=$(grep '^version:' pubspec.yaml | cut -d' ' -f2 | cut -d'+' -f1)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          mkdir -p ../release-apks
+          # ARM64 (most Android phones)
+          cp build/app/outputs/flutter-apk/app-arm64-v8a-release.apk \
+             ../release-apks/nova-agent-v${VERSION}-arm64.apk || true
+          # ARMv7 (older phones)
+          cp build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk \
+             ../release-apks/nova-agent-v${VERSION}-arm.apk || true
+          # x86_64 (emulators)
+          cp build/app/outputs/flutter-apk/app-x86_64-release.apk \
+             ../release-apks/nova-agent-v${VERSION}-x86_64.apk || true
+          # Universal fat APK
+          flutter build apk --release
+          cp build/app/outputs/flutter-apk/app-release.apk \
+             ../release-apks/nova-agent-v${VERSION}-universal.apk
+          ls -lh ../release-apks/
+
+      - name: Upload APK artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: nova-agent-apks
+          path: release-apks/*.apk
+          retention-days: 14
+
+  # ─── GitHub Release (only on version tags) ───────────────────────────────────
+  release:
+    name: Create GitHub Release
+    needs: build-apk
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download built APKs
+        uses: actions/download-artifact@v4
+        with:
+          name: nova-agent-apks
+          path: release-apks/
+
+      - name: Extract version and changelog
+        id: meta
+        run: |
+          VERSION="${GITHUB_REF_NAME}"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          # Extract this version's section from CHANGELOG.md
+          NOTES=$(awk "/^## \[${VERSION#v}\]/{found=1; next} found && /^## \[/{exit} found{print}" CHANGELOG.md)
+          if [ -z "$NOTES" ]; then
+            NOTES="See [CHANGELOG.md](CHANGELOG.md) for details."
+          fi
+          echo "notes<<EOF" >> $GITHUB_OUTPUT
+          echo "$NOTES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Nova Agent ${{ github.ref_name }}
+          body: |
+            ## Nova Agent ${{ github.ref_name }}
+
+            **Your AI assistant with native Android superpowers** 📱🤖
+
+            ${{ steps.meta.outputs.notes }}
+
+            ---
+
+            ### 📥 Download
+
+            | APK | Architecture | Use for |
+            |-----|-------------|---------|
+            | `nova-agent-*-arm64.apk` | ARM64 | Most modern phones (recommended) |
+            | `nova-agent-*-arm.apk` | ARMv7 | Older phones |
+            | `nova-agent-*-x86_64.apk` | x86_64 | Emulators |
+            | `nova-agent-*-universal.apk` | All | If unsure |
+
+            ### ⚡ Quick Install (CLI — no APK needed)
+            ```bash
+            curl -fsSL https://raw.githubusercontent.com/lekhanpro/nova-agent/main/install.sh | bash
+            ```
+
+            ### Requirements
+            - Android 7.0+ (API 24+)
+            - [Termux](https://f-droid.org/en/packages/com.termux/) from F-Droid
+            - [Termux:API](https://f-droid.org/en/packages/com.termux.api/) for Android tools
+          files: release-apks/*.apk
+          draft: false
+          prerelease: false
+          make_latest: true
