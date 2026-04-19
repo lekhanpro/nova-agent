@@ -32,38 +32,14 @@ jobs:
           channel: stable
           cache: true
 
-      # Bootstrap: create a valid Flutter project, then overlay our source
-      - name: Bootstrap Flutter project
+      - name: Write local.properties
+        working-directory: flutter_app/android
         run: |
-          # Create a minimal valid Flutter Android project in a temp dir
-          flutter create \
-            --project-name nova_agent \
-            --org com.novaagent \
-            --platforms android \
-            --no-pub \
-            /tmp/nova_bootstrap
-
-          # Copy the generated android directory (gradlew, gradle wrapper jar, settings.gradle etc.)
-          cp -r /tmp/nova_bootstrap/android/. flutter_app/android/
-
-          # Restore our custom files (they overwrite the generated ones)
-          git checkout -- flutter_app/android/app/build.gradle
-          git checkout -- flutter_app/android/app/src/main/AndroidManifest.xml
-          git checkout -- "flutter_app/android/app/src/main/kotlin/com/novaagent/app/"
-          git checkout -- flutter_app/android/build.gradle
-          git checkout -- flutter_app/android/gradle.properties
-          git checkout -- flutter_app/android/gradle/wrapper/gradle-wrapper.properties
-          git checkout -- flutter_app/android/settings.gradle
-
-          # Ensure gradlew is executable
-          chmod +x flutter_app/android/gradlew
-
-          # Write local.properties required by Gradle
-          echo "sdk.dir=$ANDROID_SDK_ROOT" > flutter_app/android/local.properties
-          echo "flutter.sdk=$(which flutter | xargs dirname | xargs dirname)" >> flutter_app/android/local.properties
-
-          echo "Bootstrap done. Files:"
-          ls -la flutter_app/android/
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
+          echo "flutter.sdk=$(dirname $(dirname $(which flutter)))" >> local.properties
+          chmod +x gradlew
+          echo "local.properties written:"
+          cat local.properties
 
       - name: Get dependencies
         working-directory: flutter_app
