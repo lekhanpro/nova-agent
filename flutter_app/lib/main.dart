@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'constants.dart';
+import 'providers/chat_provider.dart';
 import 'providers/gateway_provider.dart';
 import 'providers/setup_provider.dart';
 import 'screens/splash_screen.dart';
@@ -41,6 +42,7 @@ class NovaAgentApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => SetupProvider(prefs)),
         ChangeNotifierProvider(create: (_) => GatewayProvider(prefs)),
+        ChangeNotifierProvider(create: (_) => ChatProvider()),
       ],
       child: MaterialApp(
         title: AppConstants.appName,
@@ -52,45 +54,45 @@ class NovaAgentApp extends StatelessWidget {
   }
 
   ThemeData _buildTheme() {
-    const seedColor = Color(0xFF7C3AED); // Purple
+    const seedColor = Color(0xFFC8946A); // Amber/copper
     final base = ThemeData.dark(useMaterial3: true);
 
     return base.copyWith(
       colorScheme: ColorScheme.fromSeed(
         seedColor: seedColor,
         brightness: Brightness.dark,
-        surface: const Color(0xFF0F0F1A),
-        onSurface: const Color(0xFFE8E8F0),
+        surface: const Color(0xFF141210),
+        onSurface: const Color(0xFFEDE8E2),
       ),
-      scaffoldBackgroundColor: const Color(0xFF0F0F1A),
+      scaffoldBackgroundColor: const Color(0xFF0B0907),
       textTheme: GoogleFonts.interTextTheme(base.textTheme).apply(
-        bodyColor: const Color(0xFFE8E8F0),
-        displayColor: const Color(0xFFE8E8F0),
+        bodyColor: const Color(0xFFEDE8E2),
+        displayColor: const Color(0xFFEDE8E2),
       ),
       appBarTheme: const AppBarTheme(
-        backgroundColor: Color(0xFF0F0F1A),
+        backgroundColor: Color(0xFF0B0907),
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         centerTitle: false,
-        iconTheme: IconThemeData(color: Color(0xFFE8E8F0)),
+        iconTheme: IconThemeData(color: Color(0xFFEDE8E2)),
         titleTextStyle: TextStyle(
-          color: Color(0xFFE8E8F0),
+          color: Color(0xFFEDE8E2),
           fontSize: 18,
           fontWeight: FontWeight.w600,
         ),
       ),
       cardTheme: CardTheme(
-        color: const Color(0xFF1A1A2E),
+        color: const Color(0xFF141210),
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: const BorderSide(color: Color(0xFF2D2D4E), width: 1),
+          side: const BorderSide(color: Color(0xFF2A2218), width: 1),
         ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: seedColor,
-          foregroundColor: Colors.white,
+          foregroundColor: Colors.black,
           elevation: 0,
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
           shape: RoundedRectangleBorder(
@@ -104,14 +106,14 @@ class NovaAgentApp extends StatelessWidget {
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: const Color(0xFF1A1A2E),
+        fillColor: const Color(0xFF141210),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xFF2D2D4E)),
+          borderSide: const BorderSide(color: Color(0xFF2A2218)),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xFF2D2D4E)),
+          borderSide: const BorderSide(color: Color(0xFF2A2218)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -121,3 +123,4 @@ class NovaAgentApp extends StatelessWidget {
     );
   }
 }
+

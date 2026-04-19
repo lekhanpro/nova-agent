@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -8,20 +9,21 @@ enum AgentStatus { stopped, starting, running, error }
 
 class GatewayProvider extends ChangeNotifier {
   final SharedPreferences _prefs;
-  final GatewayService _gateway = GatewayService();
 
-  AgentStatus _status   = AgentStatus.stopped;
-  String      _logs     = '';
-  bool        _webUp    = false;
-  String      _errorMsg = '';
+  AgentStatus _status       = AgentStatus.stopped;
+  bool        _isInstalled  = false;
+  String      _logs         = '';
+  List<Map<String, dynamic>> _chatHistory = [];
+  String      _errorMsg     = '';
 
   GatewayProvider(this._prefs);
 
-  AgentStatus get status   => _status;
-  String      get logs     => _logs;
-  bool        get webUp    => _webUp;
-  String      get errorMsg => _errorMsg;
-  bool        get isRunning => _status == AgentStatus.running;
+  AgentStatus get status      => _status;
+  bool        get isInstalled => _isInstalled;
+  bool        get isRunning   => _status == AgentStatus.running;
+  String      get logs        => _logs;
+  List<Map<String, dynamic>> get chatHistory => List.unmodifiable(_chatHistory);
+  String      get errorMsg    => _errorMsg;
 
   bool get autoStart => _prefs.getBool(AppConstants.prefAutoStart) ?? false;
 
@@ -30,14 +32,22 @@ class GatewayProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> checkStatus() async {
+    try {
+      _isInstalled = await GatewayService.isInstalled();
+      final running = await GatewayService.isRunning();
+      _status = running ? AgentStatus.running : AgentStatus.stopped;
+      notifyListeners();
+    } catch (_) {}
+  }
+
   Future<void> startAgent() async {
     _status   = AgentStatus.starting;
     _errorMsg = '';
     notifyListeners();
     try {
-      await _gateway.start();
+      await GatewayService.startAgent();
       _status = AgentStatus.running;
-      _webUp  = true;
     } catch (e) {
       _errorMsg = e.toString();
       _status   = AgentStatus.error;
@@ -47,32 +57,30 @@ class GatewayProvider extends ChangeNotifier {
 
   Future<void> stopAgent() async {
     try {
-      await _gateway.stop();
+      await GatewayService.stopAgent();
     } catch (_) {}
     _status = AgentStatus.stopped;
-    _webUp  = false;
     notifyListeners();
   }
 
-  Future<void> restartAgent() async {
-    await stopAgent();
-    await Future.delayed(const Duration(seconds: 1));
-    await startAgent();
+  Future<String> ask(String query) async {
+    return GatewayService.ask(query);
   }
 
   Future<void> refreshLogs() async {
     try {
-      _logs = await _gateway.fetchLogs();
-      notifyListeners();
-    } catch (_) {}
-  }
-
-  Future<void> checkStatus() async {
-    try {
-      final running = await _gateway.isRunning();
-      _status = running ? AgentStatus.running : AgentStatus.stopped;
-      _webUp  = running;
+      _logs = await GatewayService.getLogs();
+      // Try to parse as JSON array
+      try {
+        final decoded = jsonDecode(_logs);
+        if (decoded is List) {
+          _chatHistory = decoded.cast<Map<String, dynamic>>();
+        }
+      } catch (_) {
+        _chatHistory = [];
+      }
       notifyListeners();
     } catch (_) {}
   }
 }
+

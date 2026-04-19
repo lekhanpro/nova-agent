@@ -53,7 +53,7 @@ class _WelcomePage extends StatelessWidget {
               padding: const EdgeInsets.all(18),
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
-                  colors: [Color(0xFF7C3AED), Color(0xFF4F46E5)],
+                  colors: [Color(0xFFC8946A), Color(0xFFB07340)],
                 ),
                 borderRadius: BorderRadius.circular(20),
               ),
@@ -69,8 +69,8 @@ class _WelcomePage extends StatelessWidget {
                     letterSpacing: -1)),
             const SizedBox(height: 14),
             Text(
-              'Run AutoGPT AI agent on your Android device.\n'
-              'No root required — powered by proot-distro Ubuntu.',
+              'Give AI models access to 27 Android sensors.\n'
+              'No root required — powered by Termux.',
               style: TextStyle(
                   fontSize: 16,
                   color: Colors.white.withOpacity(0.6),
@@ -78,12 +78,12 @@ class _WelcomePage extends StatelessWidget {
             ),
             const SizedBox(height: 32),
             // Requirements
-            ...['~2 GB storage', 'Stable internet (first setup)', 'Node.js via Termux']
+            ...['~100 MB storage', 'Stable internet (first setup)', 'Termux installed']
                 .map((r) => Padding(
                       padding: const EdgeInsets.only(bottom: 8),
                       child: Row(children: [
                         const Icon(Icons.check_circle_rounded,
-                            color: Color(0xFF7C3AED), size: 20),
+                            color: Color(0xFFC8946A), size: 20),
                         const SizedBox(width: 10),
                         Text(r, style: const TextStyle(fontSize: 14)),
                       ]),
@@ -99,7 +99,7 @@ class _WelcomePage extends StatelessWidget {
             const SizedBox(height: 12),
             Center(
               child: Text(
-                'Estimated time: 5-15 minutes',
+                'Estimated time: 2-5 minutes',
                 style: TextStyle(
                     fontSize: 13, color: Colors.white.withOpacity(0.4)),
               ),
@@ -140,7 +140,7 @@ class _ProgressPage extends StatelessWidget {
                 minHeight: 8,
                 backgroundColor: const Color(0xFF2D2D4E),
                 valueColor:
-                    const AlwaysStoppedAnimation(Color(0xFF7C3AED)),
+                    const AlwaysStoppedAnimation(Color(0xFFC8946A)),
               ),
             ),
             const SizedBox(height: 28),
@@ -152,9 +152,9 @@ class _ProgressPage extends StatelessWidget {
                   final done  = i + 1 < setup.currentStep;
                   final active = i + 1 == setup.currentStep;
                   final color = done
-                      ? const Color(0xFF22C55E)
+                      ? const Color(0xFF72AE8A)
                       : active
-                          ? const Color(0xFF7C3AED)
+                          ? const Color(0xFFC8946A)
                           : Colors.white.withOpacity(0.2);
 
                   return Padding(

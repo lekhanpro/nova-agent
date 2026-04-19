@@ -1,4 +1,5 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    android:sharedUserId="com.termux">
 
     <!-- ── Permissions required by Nova Agent tools ──────────────────────── -->
     <uses-permission android:name="android.permission.CAMERA" />

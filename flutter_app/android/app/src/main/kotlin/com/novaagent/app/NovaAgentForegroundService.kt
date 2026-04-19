@@ -30,7 +30,7 @@ class NovaAgentForegroundService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val title = intent?.getStringExtra("title") ?: "Nova Agent"
-        val text  = intent?.getStringExtra("text")  ?: "AutoGPT agent is running"
+        val text  = intent?.getStringExtra("text")  ?: "Nova Agent is running"
 
         val notificationIntent = Intent(this, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(
@@ -63,7 +63,7 @@ class NovaAgentForegroundService : Service() {
                 "Nova Agent Service",
                 NotificationManager.IMPORTANCE_LOW
             ).apply {
-                description = "Keeps AutoGPT agent running in the background"
+                description = "Keeps Nova Agent running in the background"
             }
             val mgr = getSystemService(NotificationManager::class.java)
             mgr.createNotificationChannel(channel)

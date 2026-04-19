@@ -1,8 +1,11 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/gateway_provider.dart';
+
+const _kAmber = Color(0xFFC8946A);
 
 class LogsScreen extends StatefulWidget {
   const LogsScreen({super.key});
@@ -20,7 +23,7 @@ class _LogsScreenState extends State<LogsScreen> {
   void initState() {
     super.initState();
     _refresh();
-    _timer = Timer.periodic(const Duration(seconds: 2), (_) => _refresh());
+    _timer = Timer.periodic(const Duration(seconds: 3), (_) => _refresh());
   }
 
   void _refresh() {
@@ -47,10 +50,10 @@ class _LogsScreenState extends State<LogsScreen> {
       return const Color(0xFFEF4444);
     }
     if (line.contains('WARNING') || line.contains('WARN')) {
-      return const Color(0xFFF59E0B);
+      return const Color(0xFFEBBA60);
     }
     if (line.contains('INFO') || line.contains('✓')) {
-      return const Color(0xFF22C55E);
+      return const Color(0xFF72AE8A);
     }
     return const Color(0xFFCCCCDD);
   }
@@ -59,16 +62,14 @@ class _LogsScreenState extends State<LogsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Live Logs'),
+        title: const Text('History'),
         actions: [
           IconButton(
             icon: Icon(
               _autoScroll
                   ? Icons.vertical_align_bottom_rounded
                   : Icons.pause_rounded,
-              color: _autoScroll
-                  ? const Color(0xFF7C3AED)
-                  : Colors.white54,
+              color: _autoScroll ? _kAmber : Colors.white54,
             ),
             tooltip: _autoScroll ? 'Auto-scroll ON' : 'Auto-scroll OFF',
             onPressed: () => setState(() => _autoScroll = !_autoScroll),
@@ -82,18 +83,19 @@ class _LogsScreenState extends State<LogsScreen> {
       body: Consumer<GatewayProvider>(
         builder: (_, gateway, __) {
           final logs = gateway.logs;
+
           if (logs.isEmpty) {
             return Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.subject_rounded,
+                  Icon(Icons.history_rounded,
                       size: 48, color: Colors.white.withOpacity(0.15)),
                   const SizedBox(height: 14),
-                  Text('No logs yet',
+                  Text('No history yet',
                       style: TextStyle(color: Colors.white.withOpacity(0.4))),
                   const SizedBox(height: 8),
-                  Text('Start the agent to see output here',
+                  Text('Chat with Nova Agent to see history here',
                       style: TextStyle(
                           fontSize: 12,
                           color: Colors.white.withOpacity(0.25))),
@@ -102,26 +104,79 @@ class _LogsScreenState extends State<LogsScreen> {
             );
           }
 
+          // Try to parse as JSON conversation history
+          try {
+            final decoded = jsonDecode(logs);
+            if (decoded is List && decoded.isNotEmpty) {
+              return _buildConversationView(decoded.cast<Map<String, dynamic>>());
+            }
+          } catch (_) {}
+
+          // Fallback: raw line-by-line display
           final lines = logs.split('\n');
           return ListView.builder(
             controller: _scroll,
             padding: const EdgeInsets.all(12),
             itemCount: lines.length,
-            itemBuilder: (_, i) {
-              final line = lines[i];
-              return Text(
-                line,
-                style: TextStyle(
-                  fontFamily: 'JetBrainsMono',
-                  fontSize: 11,
-                  height: 1.6,
-                  color: _lineColor(line),
-                ),
-              );
-            },
+            itemBuilder: (_, i) => Text(
+              lines[i],
+              style: TextStyle(
+                fontFamily: 'monospace',
+                fontSize: 11,
+                height: 1.6,
+                color: _lineColor(lines[i]),
+              ),
+            ),
           );
         },
       ),
     );
   }
+
+  Widget _buildConversationView(List<Map<String, dynamic>> entries) {
+    return ListView.builder(
+      controller: _scroll,
+      padding: const EdgeInsets.all(12),
+      itemCount: entries.length,
+      itemBuilder: (_, i) {
+        final entry   = entries[i];
+        final role    = (entry['role'] as String? ?? 'unknown').toUpperCase();
+        final content = entry['content'] as String? ?? '';
+        final isUser  = role == 'USER';
+
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 48,
+                alignment: Alignment.topRight,
+                padding: const EdgeInsets.only(right: 8, top: 2),
+                child: Text(
+                  isUser ? 'YOU' : 'NOVA',
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w700,
+                    color: isUser ? _kAmber : const Color(0xFF72AE8A),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Text(
+                  content,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    height: 1.5,
+                    color: Color(0xFFEDE8E2),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 }
+

@@ -53,7 +53,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               subtitle: const Text('Start agent when app opens'),
               value: gateway.autoStart,
               onChanged: (v) => gateway.setAutoStart(v),
-              activeColor: const Color(0xFF7C3AED),
+              activeColor: const Color(0xFFC8946A),
             ),
           ),
 
@@ -85,7 +85,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ? TextButton(
                       onPressed: NativeBridge.openBatterySettings,
                       child: const Text('Fix',
-                          style: TextStyle(color: Color(0xFF7C3AED))),
+                          style: TextStyle(color: Color(0xFFC8946A))),
                     )
                   : null,
             ),
@@ -127,7 +127,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             child: ListTile(
               leading: const Icon(Icons.refresh_rounded, color: Color(0xFFF59E0B)),
               title: const Text('Re-run Setup'),
-              subtitle: const Text('Reinstall Ubuntu + AutoGPT'),
+              subtitle: const Text('Reinstall Node.js + nova-agent'),
               onTap: () async {
                 final confirm = await showDialog<bool>(
                   context: context,
@@ -183,7 +183,7 @@ class _SectionHeader extends StatelessWidget {
         padding: const EdgeInsets.only(bottom: 8, left: 4),
         child: Text(text,
             style: const TextStyle(
-                color: Color(0xFF7C3AED),
+                color: Color(0xFFC8946A),
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 0.8)),

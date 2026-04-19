@@ -1,54 +1,69 @@
 import 'native_bridge.dart';
 import '../constants.dart';
 
-/// Manages AutoGPT agent lifecycle via NativeBridge shell commands.
+/// Manages nova-agent lifecycle via NativeBridge shell commands.
 class GatewayService {
-  static const String _agentProcess = 'autogpt';
-  static const String _webProcess   = 'server.py';
+  /// Check if novax is installed.
+  static Future<bool> isInstalled() async {
+    final result = await NativeBridge.runCommand('which novax 2>/dev/null');
+    return result.trim().isNotEmpty;
+  }
 
-  Future<void> start() async {
-    // Start log web viewer in background
-    await NativeBridge.runCommand(
-      'proot-distro login ubuntu -- bash -c "'
-      'pkill -f server.py 2>/dev/null || true; '
-      'nohup python3 ${AppConstants.webServerPath} '
-      '> /tmp/webserver.log 2>&1 &"',
+  /// Check if novax process is currently running.
+  static Future<bool> isRunning() async {
+    final result = await NativeBridge.runCommand('pgrep -f novax || echo ""');
+    return result.trim().isNotEmpty;
+  }
+
+  /// Send a one-shot query to nova agent.
+  static Future<String> ask(String query) async {
+    final escaped = query.replaceAll('"', '\\"');
+    return NativeBridge.runCommand('novax ask "$escaped" 2>&1');
+  }
+
+  /// Read conversation history.
+  static Future<String> getHistory() async {
+    return NativeBridge.runCommand(
+        'cat ~/.nova_agent/history.json 2>/dev/null || echo "[]"');
+  }
+
+  /// Read recent logs / history tail.
+  static Future<String> getLogs() async {
+    return NativeBridge.runCommand(
+        'tail -n 100 ~/.nova_agent/history.json 2>/dev/null || echo ""');
+  }
+
+  /// Write provider config to ~/.nova_agent/config.
+  static Future<void> writeConfig({
+    required String provider,
+    required String model,
+    required String apiKey,
+  }) async {
+    final providerData = AppConstants.providers.firstWhere(
+      (p) => p['id'] == provider,
+      orElse: () => AppConstants.providers.first,
     );
+    final envKey = providerData['envKey'] as String;
+    final content = [
+      'PROVIDER=$provider',
+      'MODEL=$model',
+      '$envKey=$apiKey',
+    ].join('\n');
+    await NativeBridge.writeConfig({'content': content});
+  }
 
-    await Future.delayed(const Duration(milliseconds: 800));
-
-    // Start AutoGPT agent
-    await NativeBridge.runCommand(
-      r'proot-distro login ubuntu -- bash -c "'
-      r'CLASSIC_DIR=/root/autogpt/classic/original_autogpt; '
-      r'[ -d "$CLASSIC_DIR" ] || CLASSIC_DIR=/root/autogpt; '
-      r'cd "$CLASSIC_DIR" && [ -f venv/bin/activate ] && source venv/bin/activate; '
-      r'export PYTHONUNBUFFERED=1; '
-      r'nohup python -m autogpt run --continuous --skip-reprompt '
-      r'> ${AppConstants.logFile} 2>&1 &'
-      r'echo $! > ${AppConstants.pidFile}"',
+  /// Start agent foreground service.
+  static Future<void> startAgent() async {
+    await NativeBridge.startForegroundService(
+      title: 'Nova Agent',
+      text: 'AI agent is running',
     );
   }
 
-  Future<void> stop() async {
-    await NativeBridge.runCommand(
-      'proot-distro login ubuntu -- bash -c "'
-      'pkill -f autogpt 2>/dev/null; '
-      'pkill -f server.py 2>/dev/null; '
-      'sleep 1; '
-      'pkill -9 -f autogpt 2>/dev/null || true"',
-    );
-  }
-
-  Future<bool> isRunning() async {
-    return NativeBridge.isProcessRunning(_agentProcess);
-  }
-
-  Future<String> fetchLogs({int maxLines = 200}) async {
-    return NativeBridge.readLog(AppConstants.logFile, maxLines: maxLines);
-  }
-
-  Future<bool> isWebViewerRunning() async {
-    return NativeBridge.isProcessRunning(_webProcess);
+  /// Stop agent process and foreground service.
+  static Future<void> stopAgent() async {
+    await NativeBridge.runCommand('pkill -f novax 2>/dev/null || true');
+    await NativeBridge.stopForegroundService();
   }
 }
+

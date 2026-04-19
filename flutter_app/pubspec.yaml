@@ -1,7 +1,7 @@
 name: nova_agent
 description: Run AI Agent on Android with native superpowers — camera, GPS, SMS,
   notifications, and more. No root required.
-version: 1.0.0+1
+version: 1.1.0+2
 
 environment:
   sdk: '>=3.2.0 <4.0.0'
@@ -27,6 +27,9 @@ dependencies:
   # HTTP (for log fetching)
   http: ^1.2.0
 
+  # URL launcher
+  url_launcher: ^6.3.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -34,3 +37,4 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+

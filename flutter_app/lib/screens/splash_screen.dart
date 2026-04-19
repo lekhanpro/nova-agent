@@ -58,7 +58,7 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0F0F1A),
+      backgroundColor: const Color(0xFF0B0907),
       body: Center(
         child: FadeTransition(
           opacity: _fade,
@@ -73,14 +73,14 @@ class _SplashScreenState extends State<SplashScreen>
                   height: 100,
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
-                      colors: [Color(0xFF7C3AED), Color(0xFF4F46E5)],
+                      colors: [Color(0xFFC8946A), Color(0xFFB07340)],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
                     borderRadius: BorderRadius.circular(28),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFF7C3AED).withOpacity(0.4),
+                        color: const Color(0xFFC8946A).withOpacity(0.4),
                         blurRadius: 32,
                         spreadRadius: 4,
                       ),
@@ -104,7 +104,7 @@ class _SplashScreenState extends State<SplashScreen>
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'AutoGPT on Android',
+                  'AI tools for Android',
                   style: TextStyle(
                     fontSize: 15,
                     color: Colors.white.withOpacity(0.5),
@@ -117,7 +117,7 @@ class _SplashScreenState extends State<SplashScreen>
                   height: 36,
                   child: CircularProgressIndicator(
                     strokeWidth: 2.5,
-                    color: const Color(0xFF7C3AED).withOpacity(0.7),
+                    color: const Color(0xFFC8946A).withOpacity(0.7),
                   ),
                 ),
               ],

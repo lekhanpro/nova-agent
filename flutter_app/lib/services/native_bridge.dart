@@ -10,7 +10,7 @@ class NativeBridge {
 
   // ── Shell execution ────────────────────────────────────────────────────────
 
-  /// Runs a proot-distro command inside Ubuntu and returns stdout.
+  /// Runs a shell command via Termux bash and returns stdout.
   static Future<String> runCommand(String cmd) async {
     final result = await _channel.invokeMethod<String>(
       'runCommand',
@@ -19,8 +19,7 @@ class NativeBridge {
     return result ?? '';
   }
 
-  /// Runs a shell command and streams output line by line.
-  /// Use [NativeBridgeEventStream] for streaming.
+  /// Runs a shell command synchronously and returns stdout.
   static Future<String> runCommandSync(String cmd) async {
     final result =
         await _channel.invokeMethod<String>('runCommandSync', {'cmd': cmd});
@@ -43,10 +42,26 @@ class NativeBridge {
 
   // ── Log file ───────────────────────────────────────────────────────────────
 
-  static Future<String> readLog(String path, {int maxLines = 200}) async {
+  static Future<String> readLog({int maxLines = 200}) async {
     final result = await _channel.invokeMethod<String>(
       'readLog',
-      {'path': path, 'maxLines': maxLines},
+      {'maxLines': maxLines},
+    );
+    return result ?? '';
+  }
+
+  // ── Config write ───────────────────────────────────────────────────────────
+
+  static Future<void> writeConfig(Map<String, String> config) async {
+    await _channel.invokeMethod('writeConfig', config);
+  }
+
+  // ── File read ──────────────────────────────────────────────────────────────
+
+  static Future<String> readFile(String path) async {
+    final result = await _channel.invokeMethod<String>(
+      'readFile',
+      {'path': path},
     );
     return result ?? '';
   }
@@ -72,7 +87,10 @@ class NativeBridge {
 
   // ── Foreground service ─────────────────────────────────────────────────────
 
-  static Future<void> startForegroundService(String title, String text) async {
+  static Future<void> startForegroundService({
+    required String title,
+    required String text,
+  }) async {
     await _channel
         .invokeMethod('startForegroundService', {'title': title, 'text': text});
   }
@@ -93,3 +111,4 @@ class NativeBridgeEventStream {
         .map((event) => event.toString());
   }
 }
+
