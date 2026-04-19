@@ -39,9 +39,9 @@ echo -e "${DIM}Press ENTER to keep your existing value.${NC}\n"
 
 # ─── Provider ────────────────────────────────────────────────────────────────
 echo -e "${BOLD}AI Provider:${NC}"
-echo -e "  ${CYAN}1${NC}) OpenAI     (GPT-4o-mini, GPT-4o)               ${DIM}[current: ${PROVIDER}]${NC}"
-echo -e "  ${CYAN}2${NC}) Anthropic  (Claude 3 Haiku, Claude 3.5 Sonnet)"
-echo -e "  ${CYAN}3${NC}) Google     (Gemini 1.5 Flash, Gemini 1.5 Pro)"
+echo -e "  ${CYAN}1${NC}) OpenAI     (GPT-4o-mini, GPT-4.1, o4-mini)         ${DIM}[current: ${PROVIDER}]${NC}"
+echo -e "  ${CYAN}2${NC}) Anthropic  (Claude 3.5 Haiku, Claude Sonnet, Opus)"
+echo -e "  ${CYAN}3${NC}) Google     (Gemini 2.0 Flash — free tier ✅)"
 read -r -p "  Choice [1-3, ENTER to keep]: " prov_choice
 
 case "$prov_choice" in
@@ -56,30 +56,42 @@ echo ""
 echo -e "${BOLD}Model:${NC} ${DIM}[current: ${MODEL}]${NC}"
 case "$PROVIDER" in
     openai)
-        echo -e "  ${CYAN}1${NC}) gpt-4o-mini  ${DIM}(fast, cheap, recommended)${NC}"
-        echo -e "  ${CYAN}2${NC}) gpt-4o       ${DIM}(best quality, more expensive)${NC}"
-        read -r -p "  Choice [1-2, ENTER to keep]: " m_choice
+        echo -e "  ${CYAN}1${NC}) gpt-4o-mini       ${DIM}(fast, cheap — recommended)${NC}"
+        echo -e "  ${CYAN}2${NC}) gpt-4o            ${DIM}(best quality)${NC}"
+        echo -e "  ${CYAN}3${NC}) gpt-4.1           ${DIM}(latest GPT-4.1)${NC}"
+        echo -e "  ${CYAN}4${NC}) o4-mini            ${DIM}(reasoning, fast)${NC}"
+        read -r -p "  Choice [1-4, ENTER to keep]: " m_choice
         case "$m_choice" in
             1) MODEL="gpt-4o-mini" ;;
             2) MODEL="gpt-4o"      ;;
+            3) MODEL="gpt-4.1"     ;;
+            4) MODEL="o4-mini"     ;;
         esac
         ;;
     anthropic)
-        echo -e "  ${CYAN}1${NC}) claude-3-haiku-20240307       ${DIM}(fast, cheap)${NC}"
-        echo -e "  ${CYAN}2${NC}) claude-3-5-sonnet-20241022    ${DIM}(best quality)${NC}"
-        read -r -p "  Choice [1-2, ENTER to keep]: " m_choice
+        echo -e "  ${CYAN}1${NC}) claude-3-5-haiku-20241022     ${DIM}(fast, cheap — recommended)${NC}"
+        echo -e "  ${CYAN}2${NC}) claude-3-5-sonnet-20241022    ${DIM}(best balance)${NC}"
+        echo -e "  ${CYAN}3${NC}) claude-3-haiku-20240307       ${DIM}(classic fast model)${NC}"
+        echo -e "  ${CYAN}4${NC}) claude-opus-4-5               ${DIM}(most powerful)${NC}"
+        read -r -p "  Choice [1-4, ENTER to keep]: " m_choice
         case "$m_choice" in
-            1) MODEL="claude-3-haiku-20240307"     ;;
-            2) MODEL="claude-3-5-sonnet-20241022"  ;;
+            1) MODEL="claude-3-5-haiku-20241022"  ;;
+            2) MODEL="claude-3-5-sonnet-20241022" ;;
+            3) MODEL="claude-3-haiku-20240307"    ;;
+            4) MODEL="claude-opus-4-5"            ;;
         esac
         ;;
     gemini)
-        echo -e "  ${CYAN}1${NC}) gemini-1.5-flash  ${DIM}(fast, free tier)${NC}"
-        echo -e "  ${CYAN}2${NC}) gemini-1.5-pro    ${DIM}(best quality)${NC}"
-        read -r -p "  Choice [1-2, ENTER to keep]: " m_choice
+        echo -e "  ${CYAN}1${NC}) gemini-2.0-flash   ${DIM}(fastest, free tier — recommended)${NC}"
+        echo -e "  ${CYAN}2${NC}) gemini-1.5-flash    ${DIM}(fast, free tier)${NC}"
+        echo -e "  ${CYAN}3${NC}) gemini-1.5-pro      ${DIM}(best quality)${NC}"
+        echo -e "  ${CYAN}4${NC}) gemini-2.0-pro-exp  ${DIM}(experimental, best Gemini)${NC}"
+        read -r -p "  Choice [1-4, ENTER to keep]: " m_choice
         case "$m_choice" in
-            1) MODEL="gemini-1.5-flash" ;;
-            2) MODEL="gemini-1.5-pro"   ;;
+            1) MODEL="gemini-2.0-flash"   ;;
+            2) MODEL="gemini-1.5-flash"   ;;
+            3) MODEL="gemini-1.5-pro"     ;;
+            4) MODEL="gemini-2.0-pro-exp" ;;
         esac
         ;;
 esac
