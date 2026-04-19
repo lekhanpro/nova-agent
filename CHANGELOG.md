@@ -100,7 +100,7 @@ hardware through **Termux:API**. No Ubuntu container, no root, just Python.
 - ARM64, ARMv7, and x86_64 architecture detection
 - Termux battery optimization tips
 - One-liner installer: `curl -fsSL .../install.sh | bash`
-- npm global install: `npm install -g nova-agent`
+- npm global install: `npm install -g @lekhanpro/nova-agent`
 - Postinstall hook to make shell scripts executable
 - Multi-provider support: OpenAI, Anthropic Claude, Google Gemini
 

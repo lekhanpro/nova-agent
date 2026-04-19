@@ -2,7 +2,7 @@
 
 <div align="center">
 
-[![npm version](https://img.shields.io/npm/v/nova-agent?color=7C3AED&style=flat-square&logo=npm)](https://www.npmjs.com/package/nova-agent)
+[![npm version](https://img.shields.io/npm/v/%40lekhanpro%2Fnova-agent?color=7C3AED&style=flat-square&logo=npm)](https://www.npmjs.com/package/@lekhanpro/nova-agent)
 [![License: MIT](https://img.shields.io/badge/License-MIT-7C3AED.svg?style=flat-square)](LICENSE)
 [![Android](https://img.shields.io/badge/Android-7.0%2B-3DDC84?style=flat-square&logo=android&logoColor=white)](https://android.com)
 [![Python](https://img.shields.io/badge/Python-3.8%2B-3776AB?style=flat-square&logo=python&logoColor=white)](https://python.org)
@@ -55,7 +55,7 @@ curl -fsSL https://raw.githubusercontent.com/lekhanpro/nova-agent/main/install.s
 
 Or via npm:
 ```bash
-pkg install nodejs-lts -y && npm install -g nova-agent
+pkg install nodejs-lts -y && npm install -g @lekhanpro/nova-agent
 ```
 
 ### 2. Install the Termux:API companion app
@@ -428,7 +428,7 @@ MIT © [lekhanpro](https://github.com/lekhanpro)
 
 **If Nova Agent controls your phone better than you expected, give it a ⭐**
 
-[GitHub](https://github.com/lekhanpro/nova-agent) · [npm](https://www.npmjs.com/package/nova-agent) · [Issues](https://github.com/lekhanpro/nova-agent/issues) · [Contributing](CONTRIBUTING.md)
+[GitHub](https://github.com/lekhanpro/nova-agent) · [npm](https://www.npmjs.com/package/@lekhanpro/nova-agent) · [Issues](https://github.com/lekhanpro/nova-agent/issues) · [Contributing](CONTRIBUTING.md)
 
 </div>
 

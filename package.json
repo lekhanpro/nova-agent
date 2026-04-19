@@ -1,5 +1,5 @@
 {
-  "name": "nova-agent",
+  "name": "@lekhanpro/nova-agent",
   "version": "1.1.0",
   "description": "AI agent on Android via Termux — 27 native phone tools, 3 AI providers (OpenAI · Anthropic · Gemini), persistent history, streaming. No root required.",
   "main": "lib/index.js",
